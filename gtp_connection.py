@@ -357,6 +357,111 @@ class GtpConnection():
     def policy_moves_cmd(self):
         self.respond("not done yet")
 
+    #from assignment2
+    def Win(self, legal_moves, color):
+        shuai = []
+        for point in legal_moves:
+            rt_moves = self.detect_immediate_win_for_a_point(point, color)
+            if len(rt_moves) != 0:
+                shuai.append(rt_moves[0])
+        if len(shuai) >0:
+            # print("shuai:", shuai)
+            return shuai
+        return False
+    # input the current point that want to check , and the color u wnat to check
+    def detect_immediate_win_for_a_point(self, current, color):# BLACK or WHITE, aka 1 or 2
+        occu = GoBoardUtil.generate_current_color(self.board, color) # #
+        i_win_list=[]
+        # print(current, color)
+        check = self.four_in_5(current, occu)
+        upper = (self.board.size+1)**2
+        if (0 < check) and (check< upper):
+            # print("pass")
+            if check not in i_win_list:
+                i_win_list.append(check)
+        # print(i_win_list)
+        return i_win_list   #the list with points that fits
+
+
+    def four_in_5(self, cur, list1):
+        c_list = [0,0,0,0,0,0,0,0]
+        size = self.board.size+1
+        target = [0,0,0,0,0,0,0,0]
+        for i in range(5):
+            if (cur + i) in list1:
+                c_list[0] +=1
+            else:
+                target[0] = cur + i
+            if (cur + size*i ) in list1:
+                c_list[1] +=1
+            else:
+                target[1] = cur + size*i
+            if (cur + (size*i)+i) in list1:
+                c_list[2] +=1
+            else:
+                target[2] = cur + (size*i)+i
+            if (cur + size*i -i) in list1:
+                c_list[3] +=1
+            else:
+                target[3] = cur + size*i -i
+            if (cur - i) in list1:
+                c_list[4] +=1
+            else:
+                target[4] = cur - i
+            if (cur - size*i) in list1:
+                c_list[5] +=1
+            else:
+                target[5] = cur - size*i
+            if (cur - (size*i)+i) in list1:
+                c_list[6] +=1
+            else:
+                target[6] = cur - (size*i)+i
+            if (cur - size*i -i) in list1:
+                c_list[7] +=1
+            else:
+                target[7] = cur - size*i -i
+        print(target, c_list)
+        for i in range(8):
+            if c_list[i] == 4 :
+                #print("yes", type(target[i]))
+                return target[i].item()
+
+        return False
+    #from assignment2
+    
+
+    #return the point 
+    def BlockWin(self):
+        legal_moves = GoBoardUtil.generate_legal_moves_gomoku(self.board)
+        opp = GoBoardUtil.opponent(self.board.current_player)
+        result = self.Win(legal_moves, opp)
+        if result:
+            return result[0]
+        return False
+
+    def OpenFour(self, color):
+        nodes_of_a_color = GoBoardUtil.generate_current_color(self.board, color)
+
+        # print("nodes_of_a_color: ", nodes_of_a_color)
+        i_win_list = []
+        for node in nodes_of_a_color:
+            good = self.board.check_win_in_two_for_a_node(node, color)
+            if good:
+                for each in good:
+                    if each not in i_win_list:
+                        i_win_list.append(each)
+
+        return i_win_list
+    def BlockOpenFour(self):
+        legal_moves = GoBoardUtil.generate_legal_moves_gomoku(self.board)
+        opp = GoBoardUtil.opponent(self.board.current_player)
+        result = self.OpenFour(opp)
+        if result:
+            return result
+        return False
+
+    def Random(self):
+
 def point_to_coord(point, boardsize):
     """
     Transform point given as board array index 

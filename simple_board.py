@@ -418,3 +418,105 @@ class SimpleGoBoard(object):
                 return True, BLACK
 
         return False, None
+
+    #from assignment2
+    def check_win_in_two_for_a_node(self, point, color):
+        """
+            Check if the point causes the game end for the game of Gomoko.
+            """
+        # check horizontal
+        rtv = self._point_direction_check_win_win_two_gomoko(point, 1, color)
+        if rtv != None:
+            return rtv
+
+        # print("1: ", rtv)
+        # check vertical
+        rtv = self._point_direction_check_win_win_two_gomoko(point, self.NS, color)
+        if rtv != None:
+            return rtv
+        # print("self.NS: ", rtv)
+        # check y=x
+        rtv = self._point_direction_check_win_win_two_gomoko(point, self.NS + 1, color)
+        if rtv != None:
+            return rtv
+        # print("self.NS + 1: ", rtv)
+        # check y=-x
+        rtv = self._point_direction_check_win_win_two_gomoko(point, self.NS - 1, color)
+        if rtv != None:
+            return rtv
+        # print("self.NS - 1: ", rtv)
+        return None
+
+
+    def _point_direction_check_win_win_two_gomoko(self, point, shift, color):
+        """
+        Check if the point has two_in_win condition in a direction
+        for the game of Gomoko.
+        """
+        color_count = 1
+        first_empty_count = 0
+        second_empty_count = 0
+        empty_flag = False
+        good_empty_point = None
+        first_good_empty_point = None
+        second_good_empty_point = None
+        color_continuous = True
+        d = shift
+        p = point
+
+        while True: # count color
+            p = p + d
+            if self.board[p] == color and color_continuous:
+                color_count = color_count + 1
+            elif self.board[p] == EMPTY:
+                color_continuous = False
+                first_empty_count += 1
+                if first_empty_count >= 2:
+                    break
+                elif first_empty_count == 1:
+                    first_good_empty_point = p
+            else:
+                break
+
+        if first_empty_count == 0:
+            return None
+        elif first_empty_count == 1:
+            first_good_empty_point = None
+
+        d = -d
+        p = point
+        color_continuous = False
+        while True: # count color
+            p = p + d
+            if self.board[p] == color and color_continuous:
+                color_count = color_count + 1
+            elif self.board[p] == EMPTY:
+                color_continuous = False
+                second_empty_count += 1
+                if second_empty_count >= 2:
+                    break
+                elif second_empty_count == 1:
+                    second_good_empty_point = p
+            else:
+                break
+
+        if second_empty_count == 0:
+            return None
+        elif second_empty_count == 1:
+            second_good_empty_point = None
+
+        # assert count <= 5
+        if (first_empty_count + second_empty_count) >= 3:
+            empty_flag = True
+
+        if color_count >= 3 and empty_flag:
+            if first_good_empty_point and second_good_empty_point:
+                return [first_good_empty_point, second_good_empty_point]
+            elif first_good_empty_point:
+                return [first_good_empty_point]
+            elif second_good_empty_point:
+                return [second_good_empty_point]
+        else:
+            return None
+
+    #from assignment2
