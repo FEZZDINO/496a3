@@ -2,8 +2,8 @@
 gtp_connection.py
 Module for playing games of Go using GoTextProtocol
 
-Parts of this code were originally based on the gtp module 
-in the Deep-Go project by Isaac Henrion and Amos Storkey 
+Parts of this code were originally based on the gtp module
+in the Deep-Go project by Isaac Henrion and Amos Storkey
 at the University of Edinburgh.
 """
 import traceback
@@ -23,7 +23,7 @@ class GtpConnection():
         ----------
         go_engine:
             a program that can reply to a set of GTP commandsbelow
-        board: 
+        board:
             Represents the current board state.
         """
         self._debug_mode = debug_mode
@@ -51,14 +51,11 @@ class GtpConnection():
             "gogui-rules_board": self.gogui_rules_board_cmd,
             "gogui-rules_final_result": self.gogui_rules_final_result_cmd,
             "gogui-analyze_commands": self.gogui_analyze_cmd,
-            "policy": self.policy_cmd,
-            "policy_moves": self.policy_moves_cmd
-            
-
+            "policy": self.policy_cmd
         }
 
         # used for argument checking
-        # values: (required number of arguments, 
+        # values: (required number of arguments,
         #          error message on argnum failure)
         self.argmap = {
             "boardsize": (1, 'Usage: boardsize INT'),
@@ -68,16 +65,16 @@ class GtpConnection():
             "play": (2, 'Usage: play {b,w} MOVE'),
             "legal_moves": (1, 'Usage: legal_moves {w,b}')
         }
-    
+
     def write(self, data):
-        stdout.write(data) 
+        stdout.write(data)
 
     def flush(self):
         stdout.flush()
 
     def start_connection(self):
         """
-        Start a GTP connection. 
+        Start a GTP connection.
         This function continuously monitors standard input for commands.
         """
         line = stdin.readline()
@@ -150,7 +147,7 @@ class GtpConnection():
 
     def board2d(self):
         return str(GoBoardUtil.get_twoD_board(self.board))
-        
+
     def protocol_version_cmd(self, args):
         """ Return the GTP protocol version being used (always 2) """
         self.respond('2')
@@ -292,7 +289,7 @@ class GtpConnection():
                     #print(best_move)
                     cur_max = (gmax/10)
                 self.board.reset_point_gomoku(i, color)
-            
+
 
 
         if best == PASS:
@@ -308,10 +305,10 @@ class GtpConnection():
 
     def gogui_rules_game_id_cmd(self, args):
         self.respond("Gomoku")
-    
+
     def gogui_rules_board_size_cmd(self, args):
         self.respond(str(self.board.size))
-    
+
     def legal_moves_cmd(self, args):
         """
             List legal moves for color args[0] in {'b','w'}
@@ -338,11 +335,11 @@ class GtpConnection():
             gtp_moves.append(format_point(coords))
         sorted_moves = ' '.join(sorted(gtp_moves))
         self.respond(sorted_moves)
-    
+
     def gogui_rules_side_to_move_cmd(self, args):
         color = "black" if self.board.current_player == BLACK else "white"
         self.respond(color)
-    
+
     def gogui_rules_board_cmd(self, args):
         size = self.board.size
         str = ''
@@ -360,7 +357,7 @@ class GtpConnection():
                     assert False
             str += '\n'
         self.respond(str)
-    
+
     def gogui_rules_final_result_cmd(self, args):
         game_end, winner = self.board.check_game_end_gomoku()
         moves = self.board.get_empty_points()
@@ -454,11 +451,21 @@ class GtpConnection():
                 #print("yes", type(target[i]))
                 return target[i].item()
 
-        return False
-    #from assignment2
-    
 
-    #return the point 
+
+    def policy_cmd(self, args):
+        if args[0] == "random":
+            self.policytype = "random"
+            self.respond()
+
+
+        if args[0] == "rule_based":
+            self.policytype = "rule_based"
+            self.respond()
+
+
+
+    #return the point
     def BlockWin(self):
         legal_moves = GoBoardUtil.generate_legal_moves_gomoku(self.board)
         opp = GoBoardUtil.opponent(self.board.current_player)
@@ -500,7 +507,7 @@ class GtpConnection():
 
     def policy_moves_cmd(self,args):
         checkpoint = "random"
-        
+
         moves = GoBoardUtil.generate_legal_moves_gomoku(self.board)
         color = self.board.current_player
         if self.policytype=="rule_based":
@@ -523,7 +530,7 @@ class GtpConnection():
             move_coord = point_to_coord(i, self.board.size)
             move_as_string = format_point(move_coord)
             move.append(move_as_string)
-            
+
         move.sort()
         for i in move:
             checkpoint += " " + i
@@ -542,9 +549,9 @@ class GtpConnection():
         move = self.GoBoardUtil.generate_random_move_gomoku(board)
         if move == PASS:
             return False
-        
-    
-        
+
+
+
         #play move
         self.board.play_move_gomoku(move, color)
         status = self.random(self.board, original, GoBoardUtil.opponent(color))
@@ -590,10 +597,10 @@ class GtpConnection():
 
         return status
 
-    
+
 def point_to_coord(point, boardsize):
     """
-    Transform point given as board array index 
+    Transform point given as board array index
     to (row, col) coordinate representation.
     Special case: PASS is not transformed
     """
@@ -614,8 +621,8 @@ def format_point(move):
     row, col = move
     if not 0 <= row < MAXSIZE or not 0 <= col < MAXSIZE:
         raise ValueError
-    return column_letters[col - 1]+ str(row) 
-    
+    return column_letters[col - 1]+ str(row)
+
 def move_to_coord(point_str, board_size):
     """
     Convert a string point_str representing a point, as specified by GTP,
@@ -645,6 +652,6 @@ def move_to_coord(point_str, board_size):
 
 def color_to_int(c):
     """convert character to the appropriate integer code"""
-    color_to_int = {"b": BLACK , "w": WHITE, "e": EMPTY, 
+    color_to_int = {"b": BLACK , "w": WHITE, "e": EMPTY,
                     "BORDER": BORDER}
-    return color_to_int[c] 
+    return color_to_int[c]
