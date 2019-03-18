@@ -282,7 +282,7 @@ class GtpConnection():
                 self.board.play_move_gomoku(i, color)
 
                 for _ in range(10):
-                    result = self.rules(self.board, color, color)
+                    result = self.rules(self.board, color,  GoBoardUtil.opponent(color))
                     gmax += result
                     #print(wins)
 
@@ -539,7 +539,7 @@ class GtpConnection():
         if game_end:
             if winner == original:
                 return True
-        move = self.GoBoardUtil.generate_random_move_gomoku(board)
+        move = GoBoardUtil.generate_random_move_gomoku(board)
         if move == PASS:
             return False
 
