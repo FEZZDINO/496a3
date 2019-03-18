@@ -59,7 +59,7 @@ class GtpConnection():
         #          error message on argnum failure)
         self.argmap = {
             "boardsize": (1, 'Usage: boardsize INT'),
-            "komi": (1, 'Usage: komi FLOAT'),
+            "komi": (2, 'Usage: komi FLOAT'),
             "known_command": (1, 'Usage: known_command CMD_NAME'),
             "genmove": (1, 'Usage: genmove {w,b}'),
             "play": (2, 'Usage: play {b,w} MOVE'),
@@ -184,8 +184,21 @@ class GtpConnection():
         """
         Set the engine's komi to args[0]
         """
-        self.go_engine.komi = float(args[0])
-        self.respond()
+        board_color = args[1].lower()
+        color = color_to_int(board_color)
+
+        coord = move_to_coord(args[0], self.board.size)
+        move = coord_to_point(coord[0],coord[1], self.board.size)
+
+        result = self.board.check_win_in_two_for_a_node(move, BLACK)
+        print(11111, result)
+        rtv = ""
+        for each in result:
+            coords = point_to_coord(each, self.board.size)
+            rtv = rtv + str(coords)
+
+
+        self.respond('\n' + rtv)
 
     def known_command_cmd(self, args):
         """

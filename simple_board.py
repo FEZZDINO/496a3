@@ -480,11 +480,6 @@ class SimpleGoBoard(object):
             else:
                 break
 
-        if first_empty_count == 0:
-            return None
-        elif first_empty_count == 1:
-            first_good_empty_point = None
-
         d = -d
         p = point
         color_continuous = False
@@ -502,11 +497,6 @@ class SimpleGoBoard(object):
             else:
                 break
 
-        if second_empty_count == 0:
-            return None
-        elif second_empty_count == 1:
-            second_good_empty_point = None
-
         # assert count <= 5
         if (first_empty_count + second_empty_count) >= 3:
             empty_flag = True
@@ -520,15 +510,3 @@ class SimpleGoBoard(object):
                 return [second_good_empty_point]
         else:
             return None
-
-
-
-
-
-
-
-
-
-
-
-
