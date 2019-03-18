@@ -1,7 +1,6 @@
 """
 gtp_connection.py
 Module for playing games of Go using GoTextProtocol
-
 Parts of this code were originally based on the gtp module
 in the Deep-Go project by Isaac Henrion and Amos Storkey
 at the University of Edinburgh.
@@ -12,13 +11,11 @@ from board_util import GoBoardUtil, BLACK, WHITE, EMPTY, BORDER, PASS, \
                        MAXSIZE, coord_to_point
 import numpy as np
 import re
-STACK = []
 class GtpConnection():
 
     def __init__(self, go_engine, board, debug_mode = False):
         """
         Manage a GTP connection for a Go-playing engine
-
         Parameters
         ----------
         go_engine:
@@ -51,7 +48,8 @@ class GtpConnection():
             "gogui-rules_board": self.gogui_rules_board_cmd,
             "gogui-rules_final_result": self.gogui_rules_final_result_cmd,
             "gogui-analyze_commands": self.gogui_analyze_cmd,
-            "policy": self.policy_cmd
+            "policy": self.policy_cmd,
+            "policy_moves": self.policy_moves_cmd
         }
 
         # used for argument checking
@@ -412,6 +410,7 @@ class GtpConnection():
         i_win_list=[]
         # print(current, color)
         check = self.four_in_5(current, occu)
+        #print(check)
         upper = (self.board.size+1)**2
         if (0 < check) and (check< upper):
             # print("pass")
@@ -463,7 +462,7 @@ class GtpConnection():
             if c_list[i] == 4 :
                 #print("yes", type(target[i]))
                 return target[i].item()
-
+        return False
 
 
     def policy_cmd(self, args):
@@ -554,8 +553,7 @@ class GtpConnection():
 
     def random(self,board, original, color):
 
-        #check base case
-        game_end, winner = self.board.check_game_end_gomoku()
+        game_end, winner = self.board.check_game_end_gomoku()# check if the game ends or not 
         if game_end:
             if winner == original:
                 return True
@@ -575,8 +573,8 @@ class GtpConnection():
 
     def rules(self,board, original, color):
 
-        #check base case
-        game_end, win = self.board.check_game_end_gomoku()
+       
+        game_end, win = self.board.check_game_end_gomoku()#check if the game ends or not 
         if game_end:
             if win == original:
                 return 1
