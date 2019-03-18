@@ -1,11 +1,9 @@
 clear_board
 policy rule_based
 boardsize 7
-play B C5
-play B E3
 play B F2
-play W A4
-play W C3
-play W F1
+play B E3
+play B C5
+play W A1
 showboard
 policy_moves

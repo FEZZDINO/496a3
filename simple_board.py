@@ -452,7 +452,6 @@ class SimpleGoBoard(object):
             # print("self.NS + 1: ", rtv)
             # check y=-x
             rtv += self._point_direction_check_another_win_two_gomoko(point, self.NS - 1, color)
-            print(rtv)
             if len(rtv) > 0:
                 return rtv
             else:
@@ -472,33 +471,35 @@ class SimpleGoBoard(object):
         p1 = point
         d2 = -shift
         p2 = point
-        length = len(self.board)
 
-        for each in struct:
+        for i in range(4):
             p1 += d1
-            if self.board[p1] == each:
-                if not first:
+            if self.board[p1] == struct[i]:
+                if first == None:
                     first = p1
+                if i == 3:
                     to_add = True
             else:
                 break
         if to_add:
-            rt_list.append(first)
+            if self.board[(point + d2)] == EMPTY:
+                rt_list.append(first)
             to_add = False
 
-        for each in struct:
+        for i in range(4):
             p2 += d2
-            if self.board[p2] == each:
-                if not second:
+            if self.board[p2] == struct[i]:
+                if second == None:
                     second = p2
+                if i == 3:
                     to_add = True
             else:
                 break
 
         if to_add:
-            rt_list.append(first)
-            to_add = False
-            
+            if self.board[(point + d1)] == EMPTY:
+                rt_list.append(second)
+
         return rt_list
 
     def _point_direction_check_win_win_two_gomoko(self, point, shift, color):
