@@ -542,8 +542,7 @@ class GtpConnection():
 
     def random(self,board, original, color):
 
-        #check base case
-        game_end, winner = self.board.check_game_end_gomoku()
+        game_end, winner = self.board.check_game_end_gomoku()# check if the game ends or not 
         if game_end:
             if winner == original:
                 return True
@@ -563,8 +562,8 @@ class GtpConnection():
 
     def rules(self,board, original, color):
 
-        #check base case
-        game_end, win = self.board.check_game_end_gomoku()
+       
+        game_end, win = self.board.check_game_end_gomoku()#check if the game ends or not 
         if game_end:
             if win == original:
                 return 1
