@@ -57,7 +57,7 @@ class GtpConnection():
         #          error message on argnum failure)
         self.argmap = {
             "boardsize": (1, 'Usage: boardsize INT'),
-            "komi": (2, 'Usage: komi FLOAT'),
+            "komi": (1, 'Usage: komi FLOAT'),
             "known_command": (1, 'Usage: known_command CMD_NAME'),
             "genmove": (1, 'Usage: genmove {w,b}'),
             "play": (2, 'Usage: play {b,w} MOVE'),
@@ -182,21 +182,8 @@ class GtpConnection():
         """
         Set the engine's komi to args[0]
         """
-        board_color = args[1].lower()
-        color = color_to_int(board_color)
-
-        coord = move_to_coord(args[0], self.board.size)
-        move = coord_to_point(coord[0],coord[1], self.board.size)
-
-        result = self.board.check_win_in_two_for_a_node(move, BLACK)
-        print(11111, result)
-        rtv = ""
-        for each in result:
-            coords = point_to_coord(each, self.board.size)
-            rtv = rtv + str(coords)
-
-
-        self.respond('\n' + rtv)
+        self.go_engine.komi = float(args[0])
+        self.respond()
 
     def known_command_cmd(self, args):
         """
@@ -273,9 +260,11 @@ class GtpConnection():
             return
         move = GoBoardUtil.generate_legal_moves_gomoku(self.board)
         if (self.policytype == "random"):
-            best = move[0]
+            best = None
             cur_max = 0
             for i in move:
+                if best == None:
+                    best = i
                 gmax = 0
                 for _ in range(10):
                     result = self.random(self.board, color, color)
@@ -284,9 +273,11 @@ class GtpConnection():
                     best = i
                     cur_max = (gmax/10)
         elif (self.policytype == "rule_based"):
-            best = move[0]
+            best = None
             cur_max = 0
             for i in move:
+                if best == None:
+                    best = i
                 gmax = 0
                 self.board.play_move_gomoku(i, color)
 
@@ -465,14 +456,7 @@ class GtpConnection():
         return False
 
 
-    def policy_cmd(self, args):
-        if args[0] == "random":
-            self.policytype = "random"
-            self.respond()
 
-        if args[0] == "rule_based":
-            self.policytype = "rule_based"
-            self.respond()
 
     #return the point
     def BlockWin(self):
@@ -505,8 +489,18 @@ class GtpConnection():
             return result
         return False
 
+    def policy_cmd(self, args):
+        if args[0] == "random":
+            self.policytype = "random"
+            self.respond("")
+
+
+        if args[0] == "rule_based":
+            self.policytype = "rule_based"
+            self.respond("")
+
     def policy_moves_cmd(self,args):
-        checkpoint = "random"
+        checkpoint = "Random"
 
         moves = GoBoardUtil.generate_legal_moves_gomoku(self.board)
         color = self.board.current_player
@@ -534,14 +528,14 @@ class GtpConnection():
         move.sort()
         for i in move:
             checkpoint += " " + i
-        if checkpoint== "random":
+        if checkpoint== "Random":
             checkpoint = ""
         self.respond(checkpoint)
 
 
     def random(self,board, original, color):
 
-        game_end, winner = self.board.check_game_end_gomoku()# check if the game ends or not
+        game_end, winner = self.board.check_game_end_gomoku()# check if the game ends or not 
         if game_end:
             if winner == original:
                 return True
@@ -561,8 +555,8 @@ class GtpConnection():
 
     def rules(self,board, original, color):
 
-
-        game_end, win = self.board.check_game_end_gomoku()#check if the game ends or not
+       
+        game_end, win = self.board.check_game_end_gomoku()#check if the game ends or not 
         if game_end:
             if win == original:
                 return 1
