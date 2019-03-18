@@ -463,8 +463,10 @@ class SimpleGoBoard(object):
 
         """ *x*xx* """
         rt_list = []
+        struct = [EMPTY, color, color, EMPTY]
         first = None
         second = None
+        to_add = False
 
         d1 = shift
         p1 = point
@@ -472,29 +474,31 @@ class SimpleGoBoard(object):
         p2 = point
         length = len(self.board)
 
-        p1 += d1
-        if self.board[p1] == EMPTY:
-            first = p1
+        for each in struct:
             p1 += d1
-            if self.board[p1] == color:
-                p1 += d1
-                if self.board[p1] == color:
-                    p1 += d1
-                    if self.board[p1] == EMPTY:
-                        if self.board[point + d2] == EMPTY:
-                            rt_list.append(first)
-        p2 += d2
-        if self.board[p2] == EMPTY:
-            second = p2
-            p2 += d2
-            if self.board[p2] == color:
-                p2 += d2
-                if self.board[p2] == color:
-                    p2 += d2
-                    if self.board[p2] == EMPTY:
-                        if self.board[point + d1] == EMPTY:
-                            rt_list.append(second)
+            if self.board[p1] == each:
+                if not first:
+                    first = p1
+                    to_add = True
+            else:
+                break
+        if to_add:
+            rt_list.append(first)
+            to_add = False
 
+        for each in struct:
+            p2 += d2
+            if self.board[p2] == each:
+                if not second:
+                    second = p2
+                    to_add = True
+            else:
+                break
+
+        if to_add:
+            rt_list.append(first)
+            to_add = False
+            
         return rt_list
 
     def _point_direction_check_win_win_two_gomoko(self, point, shift, color):
