@@ -482,11 +482,20 @@ class GtpConnection():
             return i_win_list
         return False
     def BlockOpenFour(self,color):
-        legal_moves = GoBoardUtil.generate_legal_moves_gomoku(self.board)
+        # legal_moves = GoBoardUtil.generate_legal_moves_gomoku(self.board)
         opp = GoBoardUtil.opponent(color)
-        result = self.OpenFour(opp)
-        if result:
-            return result
+        nodes_of_a_color = GoBoardUtil.generate_current_color(self.board, opp)
+
+        i_win_list = []
+        for node in nodes_of_a_color:
+            good = self.board.block_win_in_four(node, opp)
+            if good:
+                for each in good:
+                    if each not in i_win_list:
+                        i_win_list.append(each)
+        print("!!!!!!!!!!!!!!", i_win_list)
+        if len(i_win_list) !=0:
+            return i_win_list
         return False
 
     def policy_cmd(self, args):
@@ -535,7 +544,7 @@ class GtpConnection():
 
     def random(self,board, original, color):
 
-        game_end, winner = self.board.check_game_end_gomoku()# check if the game ends or not 
+        game_end, winner = self.board.check_game_end_gomoku()# check if the game ends or not
         if game_end:
             if winner == original:
                 return True
@@ -555,8 +564,8 @@ class GtpConnection():
 
     def rules(self,board, original, color):
 
-       
-        game_end, win = self.board.check_game_end_gomoku()#check if the game ends or not 
+
+        game_end, win = self.board.check_game_end_gomoku()#check if the game ends or not
         if game_end:
             if win == original:
                 return 1

@@ -572,3 +572,94 @@ class SimpleGoBoard(object):
                 return [second_good_empty_point]
         else:
             return []
+    def block_win_in_four(self, point, color):
+        """
+            Check if the point causes the game end for the game of Gomoko.
+            """
+        rtv = []
+        # # check horizontal
+        # rtv = self._point_direction_check_win_win_two_gomoko(point, 1, color)
+        # # print("1: ", rtv)
+        # # check vertical
+        # rtv += self._point_direction_check_win_win_two_gomoko(point, self.NS, color)
+        # # print("self.NS: ", rtv)
+        # # check y=x
+        # rtv += self._point_direction_check_win_win_two_gomoko(point, self.NS + 1, color)
+        # # print("self.NS + 1: ", rtv)
+        # # check y=-x
+        # rtv += self._point_direction_check_win_win_two_gomoko(point, self.NS - 1, color)
+        # print("self.NS - 1: ", rtv)
+        if len(rtv) > 0:
+            return rtv
+        else:
+            print("enter")
+            rtv = self._block_another_win_two_gomoko(point, 1, color)
+            # print("1: ", rtv)
+            # check vertical
+            rtv += self._block_another_win_two_gomoko(point, self.NS, color)
+            # print("self.NS: ", rtv)
+            # check y=x
+            rtv += self._block_another_win_two_gomoko(point, self.NS + 1, color)
+            # print("self.NS + 1: ", rtv)
+            # check y=-x
+            rtv += self._block_another_win_two_gomoko(point, self.NS - 1, color)
+            if len(rtv) > 0:
+                return rtv
+            else:
+                return None
+
+    def _block_another_win_two_gomoko(self, point, shift, color):
+
+        """ *x*xx* """
+        rt_list_one = []
+        rt_list_two = []
+        rt_one = True
+        rt_two = True
+        struct = [EMPTY, color, color, EMPTY]
+        first = None
+        second = None
+        to_add = False
+
+        d1 = shift
+        p1 = point
+        d2 = -shift
+        p2 = point
+
+        for i in range(4):
+            p1 += d1
+            if self.board[p1] == struct[i]:
+                if struct[i] == EMPTY:
+                    rt_list_one.append(p1)
+            else:
+                rt_one = False
+                break
+        if rt_one:
+            if self.board[(point + d2)] == EMPTY:
+                rt_list_one.append(point + d2)
+            else:
+                rt_one = False
+
+
+        for i in range(4):
+            p2 += d2
+            if self.board[p2] == struct[i]:
+                if struct[i] == EMPTY:
+                    rt_list_two.append(p2)
+            else:
+                rt_two = False
+                break
+
+        if rt_two:
+            if self.board[(point + d1)] == EMPTY:
+                rt_list_two.append(point + d1)
+            else:
+                rt_two = False
+
+        if rt_one and rt_two:
+            return rt_list_one + rt_list_two
+        elif rt_one:
+            return rt_list_one
+        elif rt_two:
+            return rt_list_two
+        else:
+            return []
