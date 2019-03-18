@@ -470,12 +470,9 @@ class GtpConnection():
             self.policytype = "random"
             self.respond()
 
-
         if args[0] == "rule_based":
             self.policytype = "rule_based"
             self.respond()
-
-
 
     #return the point
     def BlockWin(self):
@@ -507,15 +504,6 @@ class GtpConnection():
         if result:
             return result
         return False
-
-    def policy_cmd(self, args):
-        if args[0] == "random":
-            self.policytype = "random"
-
-
-
-        if args[0] == "rule_based":
-            self.policytype = "rule_based"
 
     def policy_moves_cmd(self,args):
         checkpoint = "random"
@@ -553,7 +541,7 @@ class GtpConnection():
 
     def random(self,board, original, color):
 
-        game_end, winner = self.board.check_game_end_gomoku()# check if the game ends or not 
+        game_end, winner = self.board.check_game_end_gomoku()# check if the game ends or not
         if game_end:
             if winner == original:
                 return True
@@ -573,8 +561,8 @@ class GtpConnection():
 
     def rules(self,board, original, color):
 
-       
-        game_end, win = self.board.check_game_end_gomoku()#check if the game ends or not 
+
+        game_end, win = self.board.check_game_end_gomoku()#check if the game ends or not
         if game_end:
             if win == original:
                 return 1
