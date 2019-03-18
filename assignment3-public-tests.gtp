@@ -47,6 +47,7 @@ play B A2
 play W F2
 play B E2
 play W G2
+showboard
 10 policy_moves
 #?[OpenFour C1]
 
@@ -99,6 +100,7 @@ play B E1
 play W B2
 play B A2
 play W A1
+showboard
 20 policy_moves
 #?[Random B1]
 
@@ -152,6 +154,7 @@ play B E1
 play W B2
 play B A2
 play W A1
+showboard
 30 policy_moves
 #?[Random B1]
 
@@ -174,7 +177,7 @@ play W C3
 play B B3
 play W C4
 play B B4
-
+showboard
 70 policy_moves
 #?[BlockWin B5]
 
@@ -186,8 +189,10 @@ play B A1
 #?[OpenFour C5]
 play W C5
 play B A2
+showboard
 100 policy_moves
 #?[Win C1 C6]
+showboard
 110 genmove W
 #?[C1|C6]
 
@@ -198,7 +203,7 @@ play W A2
 play B D3
 play W A3
 play B D4
-
+showboard
 120 policy_moves
 #?[BlockOpenFour D1 D5 D6]
 

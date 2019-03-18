@@ -467,6 +467,8 @@ class GtpConnection():
             return result
         return False
 
+
+
     def OpenFour(self, color):
         nodes_of_a_color = GoBoardUtil.generate_current_color(self.board, color)
 
@@ -481,21 +483,35 @@ class GtpConnection():
         if len(i_win_list) !=False:
             return i_win_list
         return False
-    def BlockOpenFour(self,color):
-        # legal_moves = GoBoardUtil.generate_legal_moves_gomoku(self.board)
-        opp = GoBoardUtil.opponent(color)
-        nodes_of_a_color = GoBoardUtil.generate_current_color(self.board, opp)
 
+
+
+    def OpenFour_my(self, color):
+        nodes_of_a_color = GoBoardUtil.generate_current_color(self.board, color)
+
+        # print("nodes_of_a_color: ", nodes_of_a_color)
         i_win_list = []
         for node in nodes_of_a_color:
-            good = self.board.block_win_in_four(node, opp)
+            good = self.board.check_win_in_two_for_a_node_my(node, color)
             if good:
                 for each in good:
                     if each not in i_win_list:
                         i_win_list.append(each)
-        print("!!!!!!!!!!!!!!", i_win_list)
-        if len(i_win_list) !=0:
+        if len(i_win_list) !=False:
             return i_win_list
+        return False
+
+    def BlockOpenFour(self,color):
+        legal_moves = GoBoardUtil.generate_legal_moves_gomoku(self.board)
+        opp = GoBoardUtil.opponent(color)
+        result = self.OpenFour_my(opp)
+        if result:
+            if len(result) == 1:
+                for node in legal_moves:
+                    check_3_connect(point)
+                
+            else:
+                return result
         return False
 
     def policy_cmd(self, args):
